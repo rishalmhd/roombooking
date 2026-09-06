@@ -1,14 +1,31 @@
 from pathlib import Path
 import os
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-h_6d2dmzah4=!9a%0ot-wvbu8^q(95v-!@ftpa4wp59$_!t^1x'
 
-DEBUG = True
-ALLOWED_HOSTS = []
+# =========================
+# SECURITY
+# =========================
 
-# Application definition
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-local-development-key"
+)
+
+DEBUG = os.environ.get("DEBUG", "True") == "True"
+
+ALLOWED_HOSTS = os.environ.get(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1"
+).split(",")
+
+
+# =========================
+# APPLICATIONS
+# =========================
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -22,8 +39,17 @@ INSTALLED_APPS = [
     'manager_app',
 ]
 
+
+# =========================
+# MIDDLEWARE
+# =========================
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
+    # WhiteNoise
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -32,14 +58,30 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
+# =========================
+# URL / WSGI
+# =========================
+
 ROOT_URLCONF = 'roombooking.urls'
+
+WSGI_APPLICATION = 'roombooking.wsgi.application'
+
+
+# =========================
+# TEMPLATES
+# =========================
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # Add templates directory
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates')
+        ],
+
         'APP_DIRS': True,
+
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.request',
@@ -50,47 +92,107 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'roombooking.wsgi.application'
 
-# Database
+# =========================
+# DATABASE
+# =========================
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+    )
 }
 
-# Password validation
+
+# =========================
+# PASSWORD VALIDATION
+# =========================
+
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+    {
+        'NAME':
+        'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME':
+        'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME':
+        'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME':
+        'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
-# Internationalization
+
+# =========================
+# INTERNATIONALIZATION
+# =========================
+
 LANGUAGE_CODE = 'en-us'
+
 TIME_ZONE = 'UTC'
+
 USE_I18N = True
+
 USE_TZ = True
 
-# Static files (CSS, JS, Images)
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-# Media files (uploaded room images)
+# =========================
+# STATIC FILES
+# =========================
+
+STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static')
+]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+STATICFILES_STORAGE = (
+    'whitenoise.storage.CompressedManifestStaticFilesStorage'
+)
+
+
+# =========================
+# MEDIA FILES
+# =========================
+
 MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Default primary key field type
+
+# =========================
+# DEFAULT PRIMARY KEY
+# =========================
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Custom User model
+
+# =========================
+# CUSTOM USER
+# =========================
+
 AUTH_USER_MODEL = "customer_app.User"
 
-# Login URL for role-based login
+
+# =========================
+# LOGIN
+# =========================
+
 LOGIN_URL = "/login/"
 
 
-RAZORPAY_KEY_ID = "rzp_test_RhADAI5I6DtlsG"
-RAZORPAY_KEY_SECRET = "KE4qjckUf8wQqo70kt9bBBpr"
+# =========================
+# RAZORPAY
+# =========================
+
+RAZORPAY_KEY_ID = os.environ.get("RAZORPAY_KEY_ID")
+
+RAZORPAY_KEY_SECRET = os.environ.get("RAZORPAY_KEY_SECRET")
