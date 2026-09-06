@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto mt-10 px-4">
+
+    <!-- Header -->
+    <div class="text-center mb-6">
+        <h2 class="text-3xl font-bold text-blue-600">My Bookings</h2>
+        <p class="text-gray-500">View all your confirmed reservations</p>
+        <div class="w-24 mx-auto mt-2 border-b-4 border-blue-600"></div>
+    </div>
+
+    {% if bookings %}
+    <div class="bg-white shadow-xl rounded-xl overflow-hidden border border-gray-200">
+        <table class="w-full text-left">
+            <thead class="bg-blue-600 text-white">
+                <tr>
+                    <th class="py-3 px-4">Room</th>
+                    <th class="py-3 px-4">From</th>
+                    <th class="py-3 px-4">To</th>
+                    <th class="py-3 px-4">Booked On</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for b in bookings %}
+                <tr class="border-b hover:bg-gray-100 transition">
+                    <td class="py-3 px-4 font-semibold text-gray-700">
+                        {{ b.room.room_title }}
+                    </td>
+                    <td class="py-3 px-4 text-gray-600">{{ b.start_date }}</td>
+                    <td class="py-3 px-4 text-gray-600">{{ b.end_date }}</td>
+                    <td class="py-3 px-4 text-gray-600">{{ b.created_at|date:"M d, Y" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% else %}
+
+    <div class="text-center mt-16">
+        <div class="text-gray-400 text-7xl">📭</div>
+        <h4 class="text-gray-600 text-xl mt-3">No bookings yet</h4>
+        <a href="{% url 'home' %}"
+           class="mt-4 inline-block bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow">
+           Book a Home
+        </a>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

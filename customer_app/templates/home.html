@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block content %}
+
+<div class="relative h-96 overflow-hidden">
+    <img src="https://www.shutterstock.com/image-photo/beach-holidays-couple-luxury-hotel-260nw-2481818945.jpg"
+         alt=""
+         class="w-full h-full object-cover object-center"
+         loading="lazy">
+    <div class="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+        <div class="text-center text-white px-4 animate-fadeInUp">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+               BOOK YOUR ROOMS
+            </h1>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-5xl mx-auto mt-8 bg-white p-6 shadow-lg rounded-2xl">
+    <form method="GET" action="" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <input type="text" name="city" placeholder="City"
+               class="border p-3 rounded w-full bg-white focus:ring-2 focus:ring-primary">
+
+        <input type="date" name="check_in"
+               class="border p-3 rounded w-full bg-white focus:ring-2 focus:ring-primary">
+
+        <input type="date" name="check_out"
+               class="border p-3 rounded w-full bg-white focus:ring-2 focus:ring-primary">
+
+        <button class="bg-primary text-white rounded-xl p-3 font-semibold hover:bg-red-500 transition">
+            Search
+        </button>
+    </form>
+</div>
+
+<div class="max-w-6xl mx-auto mt-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+
+    {% for room in rooms %}
+    <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition">
+
+        {% if room.image %}
+        <img src="{{ room.image.url }}" class="w-full h-60 object-cover">
+        {% else %}
+        <img src="{% static 'no_image.jpg' %}" class="w-full h-60 object-cover">
+        {% endif %}
+
+        <div class="p-4">
+            <h3 class="text-lg font-semibold">{{ room.room_title }}</h3>
+            <p class="text-gray-600">{{ room.city }}</p>
+            <p class="text-primary font-bold text-xl mt-2">₹{{ room.price }}</p>
+
+            <div class="flex gap-2 mt-3">
+
+                <a href="{% url 'room_detail' room.id %}"
+                   class="bg-primary text-white w-full text-center py-2 rounded">
+                    View Deal
+                </a>
+
+                <a href="{% url 'add_to_cart' room.id %}"
+                   class="border w-full text-center py-2 rounded">
+                    Add to Cart
+                </a>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</div>
+
+{% endblock %}
